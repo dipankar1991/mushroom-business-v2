@@ -1,5 +1,18 @@
 export type TransactionType = 'expense' | 'funding' | 'revenue';
 
+export interface Transaction {
+    id?: string;
+    date: string;
+    type: TransactionType;
+    category: string;
+    subcategory?: string;
+    description: string;
+    debit: number;
+    credit: number;
+    notes?: string;
+    created_at?: string;
+}
+
 export const TRANSACTION_TYPES: { value: TransactionType; label: string }[] = [
     { value: 'funding', label: 'Funding (In)' },
     { value: 'expense', label: 'Expense (Out)' },

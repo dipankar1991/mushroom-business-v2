@@ -1,25 +1,14 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { db } from '@/lib/db';
 import { Card, CardContent } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
-import { Loader2, Search } from 'lucide-react';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { TRANSACTION_TYPES } from '@/lib/constants';
-
-interface Transaction {
-    id: string;
-    created_at: string;
-    date: string;
-    type: string;
-    category: string;
-    subcategory: string;
-    description: string;
-    amount: number;
-    notes: string;
-}
+import { Loader2 } from 'lucide-react';
+import type { Transaction } from '@/lib/constants';
+import { TransactionFilters } from './TransactionFilters';
+import { TransactionItem } from './TransactionItem';
+import { useNavigate } from 'react-router-dom';
 
 export default function TransactionList() {
+    const navigate = useNavigate();
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,19 +21,35 @@ export default function TransactionList() {
     const fetchTransactions = async () => {
         setIsLoading(true);
         try {
-            const { data, error } = await supabase
-                .from('transactions')
-                .select('*')
-                .order('date', { ascending: false });
-
-            if (error) throw error;
-            setTransactions(data || []);
+            const data = await db.getTransactions();
+            setTransactions(data);
         } catch (error) {
             console.error('Error fetching transactions:', error);
-            // In a real app, show a toast. For now, maybe just log or show empty.
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure you want to delete this transaction?')) return;
+
+        try {
+            // Check if delete is implemented
+            if (!db.deleteTransaction) {
+                alert("Delete function is not yet implemented for this database provider.");
+                return;
+            }
+            await db.deleteTransaction(id);
+            // Refresh
+            fetchTransactions();
+        } catch (error) {
+            console.error("Delete failed", error);
+            alert("Failed to delete transaction.");
+        }
+    };
+
+    const handleEdit = (id: string) => {
+        navigate(`/add?edit=${id}`);
     };
 
     const filteredTransactions = transactions.filter(t => {
@@ -62,29 +67,12 @@ export default function TransactionList() {
         <div className="space-y-4">
             <div className="flex flex-col gap-2">
                 <h2 className="text-2xl font-bold">History</h2>
-
-                {/* Search and Filter */}
-                <div className="flex gap-2">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                        <Input
-                            placeholder="Search..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-8"
-                        />
-                    </div>
-                    <select
-                        className="rounded-md border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                        value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
-                    >
-                        <option value="all">All</option>
-                        {TRANSACTION_TYPES.map(t => (
-                            <option key={t.value} value={t.value}>{t.label}</option>
-                        ))}
-                    </select>
-                </div>
+                <TransactionFilters
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    filterType={filterType}
+                    setFilterType={setFilterType}
+                />
             </div>
 
             {isLoading ? (
@@ -100,25 +88,12 @@ export default function TransactionList() {
             ) : (
                 <div className="space-y-3">
                     {filteredTransactions.map((t) => (
-                        <Card key={t.id} className="overflow-hidden">
-                            <div className="flex items-center justify-between p-4">
-                                <div className="flex flex-col gap-1">
-                                    <span className="font-semibold text-gray-900">{t.description}</span>
-                                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                                        <span>{format(new Date(t.date), 'MMM dd, yyyy')}</span>
-                                        <span>•</span>
-                                        <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-700">{t.category}</span>
-                                    </div>
-                                </div>
-                                <div className={cn(
-                                    "font-bold text-sm",
-                                    t.type === 'expense' ? "text-red-600" : "text-green-600"
-                                )}>
-                                    {t.type === 'expense' ? '-' : '+'}
-                                    ₹{Number(t.amount).toFixed(2)}
-                                </div>
-                            </div>
-                        </Card>
+                        <TransactionItem
+                            key={t.id || Math.random()}
+                            transaction={t}
+                            onDelete={handleDelete}
+                            onEdit={handleEdit}
+                        />
                     ))}
                 </div>
             )}

@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useNavigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
+
+import { db } from '@/lib/db';
 import { TRANSACTION_TYPES, CATEGORIES, COMMON_SUBCATEGORIES, type TransactionType } from '@/lib/constants';
-import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 // Validation Schema
 const formSchema = z.object({
@@ -58,7 +59,7 @@ export default function TransactionForm() {
             setValue('category', '');
             setValue('subcategory', '');
         }
-    }, [selectedType, setValue]); // Remove selectedCategory dep to avoid loops
+    }, [selectedType, setValue, selectedCategory]);
 
     // Update sub-categories when Category changes
     useEffect(() => {
@@ -69,27 +70,73 @@ export default function TransactionForm() {
         }
     }, [selectedCategory]);
 
+    // Edit Mode Logic
+    useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        const editId = searchParams.get('edit');
+        if (editId) {
+            loadTransaction(editId);
+        }
+    }, []);
+
+    const loadTransaction = async (id: string) => {
+        setIsLoading(true);
+        try {
+            const allTxs = await db.getTransactions();
+            const tx = allTxs.find(t => t.id === id);
+
+            if (tx) {
+                // Populate Form
+                setValue('date', tx.date);
+                setValue('type', tx.type);
+                setValue('category', tx.category);
+                setValue('subcategory', tx.subcategory || '');
+                setValue('item_description', tx.description);
+
+                const amt = tx.type === 'expense' ? tx.debit : tx.credit;
+                setValue('amount', String(amt));
+                setValue('notes', tx.notes || '');
+            } else {
+                alert("Transaction not found");
+                navigate('/transactions');
+            }
+        } catch (error) {
+            console.error("Failed to load transaction", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const onSubmit = async (data: TransactionFormValues) => {
         setIsLoading(true);
+        const searchParams = new URLSearchParams(window.location.search);
+        const editId = searchParams.get('edit');
+
         try {
-            const { error } = await supabase.from('transactions').insert({
+            const amountVal = Number(data.amount);
+            const isExpense = data.type === 'expense';
+
+            const payload = {
                 date: data.date,
-                type: data.type,
+                type: data.type as TransactionType,
                 category: data.category,
                 subcategory: data.subcategory,
                 description: data.item_description,
-                amount: Number(data.amount),
-                notes: data.notes,
-                created_at: new Date().toISOString(),
-            });
+                debit: isExpense ? amountVal : 0,
+                credit: isExpense ? 0 : amountVal,
+                notes: data.notes || '',
+            };
 
-            if (error) throw error;
+            if (editId) {
+                await db.updateTransaction(editId, payload);
+            } else {
+                await db.addTransaction(payload);
+            }
 
             navigate('/transactions'); // Go to list after success
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error saving transaction:", error);
-            alert("Failed to save transaction. Please checks your connection and try again.");
+            alert(`Failed to save transaction: ${error.message || error.details || "Unknown error"}`);
         } finally {
             setIsLoading(false);
         }
@@ -98,7 +145,9 @@ export default function TransactionForm() {
     return (
         <Card className="w-full shadow-none border-0 sm:border">
             <CardHeader>
-                <CardTitle>New Transaction</CardTitle>
+                <CardTitle>
+                    {new URLSearchParams(window.location.search).get('edit') ? 'Edit Transaction' : 'New Transaction'}
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -138,7 +187,7 @@ export default function TransactionForm() {
                         {errors.category && <p className="text-xs text-red-500">{errors.category.message}</p>}
                     </div>
 
-                    {/* Sub-Category (Combobox logic simplified to select or text for now) */}
+                    {/* Sub-Category */}
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Sub-Category</label>
                         <div className="flex gap-2">
@@ -167,7 +216,6 @@ export default function TransactionForm() {
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Amount</label>
                         <Input type="number" step="0.01" placeholder="0.00" {...register('amount')} />
-                        {/* Dynamic Credit/Debit display */}
                         {watch('amount') && (
                             <p className="text-xs font-semibold">
                                 Will be recorded as: <span className={selectedType === 'expense' ? 'text-red-600' : 'text-green-600'}>
@@ -189,7 +237,7 @@ export default function TransactionForm() {
                     </div>
 
                     <Button type="submit" className="w-full bg-primary" disabled={isLoading}>
-                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Transaction'}
+                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (new URLSearchParams(window.location.search).get('edit') ? 'Update Transaction' : 'Save Transaction')}
                     </Button>
 
                 </form>
