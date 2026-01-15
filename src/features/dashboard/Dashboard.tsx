@@ -43,7 +43,7 @@ export default function Dashboard() {
         let fundingCredit = 0;
 
         // Monthly breakdown map
-        const monthlyStats: Record<string, { income: number; expense: number }> = {};
+        const monthlyStats: Record<string, { income: number; expense: number; funding: number }> = {};
 
         txs.forEach(t => {
             const debit = Number(t.debit) || 0;
@@ -62,12 +62,14 @@ export default function Dashboard() {
             // Chart - group by month
             if (t.date) {
                 const month = t.date.slice(0, 7); // YYYY-MM
-                if (!monthlyStats[month]) monthlyStats[month] = { income: 0, expense: 0 };
+                if (!monthlyStats[month]) monthlyStats[month] = { income: 0, expense: 0, funding: 0 };
 
                 if (t.type === 'expense') {
                     monthlyStats[month].expense += debit;
+                } else if (t.type === 'funding') {
+                    monthlyStats[month].funding += credit;
                 } else {
-                    monthlyStats[month].income += credit;
+                    monthlyStats[month].income += credit; // Revenue
                 }
             }
         });
@@ -84,11 +86,25 @@ export default function Dashboard() {
 
         // Format chart data
         const sortedMonths = Object.keys(monthlyStats).sort();
-        const data = sortedMonths.map(m => ({
-            name: m,
-            Income: monthlyStats[m].income,
-            Expense: monthlyStats[m].expense
-        }));
+        let cumulativeProfit = 0;
+
+        const data = sortedMonths.map(m => {
+            const income = monthlyStats[m].income;
+            const expense = monthlyStats[m].expense;
+            const funding = monthlyStats[m].funding; // Capital Infused
+
+            // Net for Profit Line (Revenue - Expense)
+            const net = income - expense;
+            cumulativeProfit += net;
+
+            return {
+                name: m,
+                Revenue: income,
+                Expense: expense,
+                Funding: funding,
+                Profit: cumulativeProfit
+            };
+        });
         setChartData(data);
     };
 

@@ -1,5 +1,5 @@
 import { Outlet, useLocation, Link } from 'react-router-dom';
-import { LayoutDashboard, Receipt, PlusCircle, Sprout, Package } from 'lucide-react';
+import { LayoutDashboard, ClipboardList, PlusCircle, Sprout, Package } from 'lucide-react';
 import { cn } from '@/lib/utils'; // Assuming you have utils for cn/dls
 
 export default function AppLayout() {
@@ -78,7 +78,7 @@ export default function AppLayout() {
                         isActive('/transactions') ? "text-primary" : "text-gray-400 hover:text-gray-600"
                     )}
                 >
-                    <Receipt className="h-6 w-6" />
+                    <ClipboardList className="h-6 w-6" />
                     <span className="text-xs font-medium">History</span>
                 </Link>
 

@@ -90,7 +90,7 @@ export default function BatchForm() {
                         {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {/* Type */}
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Mushroom Type</label>
@@ -114,7 +114,7 @@ export default function BatchForm() {
                     </div>
 
                     {/* Dates */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Start Date</label>
                             <Input type="date" {...register('start_date')} />

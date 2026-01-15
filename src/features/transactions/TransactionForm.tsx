@@ -206,17 +206,17 @@ export default function TransactionForm() {
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Date</label>
                             <Input type="date" {...register('date')} />
                             {errors.date && <p className="text-xs text-red-500">{errors.date.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Type</label>
+                            <label className="text-sm font-medium">Transaction Type</label>
                             <select
                                 {...register('type')}
-                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
                             >
                                 {TRANSACTION_TYPES.map(t => (
                                     <option key={t.value} value={t.value}>{t.label}</option>

@@ -13,6 +13,14 @@ export default function TransactionList() {
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('all');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    useEffect(() => {
+        // Default to current month view could be good, but 'All' is safer start
+        // setStartDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]);
+        // setEndDate(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0]);
+    }, []);
 
     useEffect(() => {
         fetchTransactions();
@@ -60,7 +68,15 @@ export default function TransactionList() {
 
         const matchesType = filterType === 'all' || t.type === filterType;
 
-        return matchesSearch && matchesType;
+        const txDate = new Date(t.date);
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+
+        const matchesDate =
+            (!start || txDate >= start) &&
+            (!end || txDate <= end);
+
+        return matchesSearch && matchesType && matchesDate;
     });
 
     return (
@@ -72,6 +88,10 @@ export default function TransactionList() {
                     setSearchTerm={setSearchTerm}
                     filterType={filterType}
                     setFilterType={setFilterType}
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
                 />
             </div>
 
