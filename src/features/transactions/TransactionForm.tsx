@@ -190,33 +190,30 @@ export default function TransactionForm() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
                     {/* Batch Link */}
-                    <div className="p-3 bg-blue-50 rounded-md border border-blue-100">
-                        <label className="text-sm font-medium text-blue-800">Assign to Batch (Optional)</label>
+                    <div className="p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <label className="text-xs font-medium text-blue-800">Assign to Batch (Optional)</label>
                         <select
                             {...register('batch_id')}
-                            className="flex h-10 w-full rounded-md border border-blue-200 bg-white px-3 py-2 text-sm mt-1"
+                            className="flex h-8 w-full rounded-md border border-blue-200 bg-white px-2 py-1 text-xs mt-1 focus:ring-1 focus:ring-primary focus:outline-none"
                         >
                             <option value="">-- No Batch --</option>
                             {activeBatches.map(b => (
                                 <option key={b.id} value={b.id}>{b.name} ({b.status})</option>
                             ))}
                         </select>
-                        <p className="text-[10px] text-blue-600 mt-1">
-                            Link expenses (like Spawn/Substrate) or Revenue to a specific grow cycle.
-                        </p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Date</label>
-                            <Input type="date" {...register('date')} />
-                            {errors.date && <p className="text-xs text-red-500">{errors.date.message}</p>}
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium">Date</label>
+                            <Input type="date" className="h-8 text-xs py-1" {...register('date')} />
+                            {errors.date && <p className="text-[10px] text-red-500">{errors.date.message}</p>}
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Transaction Type</label>
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium">Type</label>
                             <select
                                 {...register('type')}
-                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                                className="flex h-8 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:ring-1 focus:ring-primary focus:outline-none"
                             >
                                 {TRANSACTION_TYPES.map(t => (
                                     <option key={t.value} value={t.value}>{t.label}</option>
@@ -225,66 +222,68 @@ export default function TransactionForm() {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Category</label>
-                        <select
-                            {...register('category')}
-                            className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-                        >
-                            <option value="">Select Category</option>
-                            {availableCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                        </select>
-                        {errors.category && <p className="text-xs text-red-500">{errors.category.message}</p>}
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium">Category</label>
+                            <select
+                                {...register('category')}
+                                className="flex h-8 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:ring-1 focus:ring-primary focus:outline-none"
+                            >
+                                <option value="">Select</option>
+                                {availableCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                            </select>
+                            {errors.category && <p className="text-[10px] text-red-500">{errors.category.message}</p>}
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium">Sub-Category</label>
+                            <select
+                                {...register('subcategory')}
+                                className="flex h-8 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:ring-1 focus:ring-primary focus:outline-none"
+                            >
+                                <option value="">Select or Type</option>
+                                {availableSubCategories.map(sub => <option key={sub} value={sub}>{sub}</option>)}
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Sub-Category</label>
-                        <select
-                            {...register('subcategory')}
-                            className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-                        >
-                            <option value="">Select or Type in Notes</option>
-                            {availableSubCategories.map(sub => <option key={sub} value={sub}>{sub}</option>)}
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Description</label>
-                        <Input placeholder="e.g. 50kg Wheat Straw" {...register('item_description')} />
-                        {errors.item_description && <p className="text-xs text-red-500">{errors.item_description.message}</p>}
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Description</label>
+                        <Input className="h-8 text-xs py-1" placeholder="e.g. 50kg Wheat Straw" {...register('item_description')} />
+                        {errors.item_description && <p className="text-[10px] text-red-500">{errors.item_description.message}</p>}
                     </div>
 
                     {/* Sales Specific Fields */}
                     {selectedType === 'revenue' && (
-                        <div className="grid grid-cols-2 gap-4 p-3 bg-green-50 rounded-md border border-green-100">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Quantity (kg)</label>
-                                <Input type="number" step="0.1" {...register('quantity_kg')} />
+                        <div className="grid grid-cols-2 gap-2 p-2 bg-green-50 rounded-md border border-green-100">
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium">Quantity (kg)</label>
+                                <Input type="number" step="0.1" className="h-8 text-xs py-1" {...register('quantity_kg')} />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Price/kg</label>
-                                <Input type="number" step="1" {...register('unit_price')} />
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium">Price/kg</label>
+                                <Input type="number" step="1" className="h-8 text-xs py-1" {...register('unit_price')} />
                             </div>
                         </div>
                     )}
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Total Amount (₹)</label>
-                        <Input type="number" step="0.01" {...register('amount')} />
-                        {errors.amount && <p className="text-xs text-red-500">{errors.amount.message}</p>}
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Total Amount (₹)</label>
+                        <Input type="number" step="0.01" className="h-8 text-xs py-1" {...register('amount')} />
+                        {errors.amount && <p className="text-[10px] text-red-500">{errors.amount.message}</p>}
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Notes</label>
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Notes</label>
                         <textarea
                             {...register('notes')}
-                            className="flex min-h-[60px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+                            className="flex min-h-[40px] w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:ring-1 focus:ring-primary focus:outline-none"
                         />
                     </div>
 
-                    <Button type="submit" className="w-full bg-primary" disabled={isLoading}>
-                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Save Transaction'}
+                    <Button type="submit" className="w-full h-9 text-xs bg-primary" disabled={isLoading}>
+                        {isLoading ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : 'Save Transaction'}
                     </Button>
 
                 </form>

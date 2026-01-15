@@ -84,29 +84,29 @@ export default function BatchForm() {
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
                     {/* Batch Name */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Batch ID/Name</label>
-                        <Input placeholder="e.g. OYSTER-OCT-001" {...register('name')} />
-                        {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Batch ID/Name</label>
+                        <Input className="h-8 text-xs py-1" placeholder="e.g. OYSTER-OCT-001" {...register('name')} />
+                        {errors.name && <p className="text-[10px] text-red-500">{errors.name.message}</p>}
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-2">
                         {/* Type */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Mushroom Type</label>
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium">Mushroom Type</label>
                             <select
                                 {...register('mushroom_type')}
-                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                                className="flex h-8 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:ring-1 focus:ring-primary focus:outline-none"
                             >
                                 {MUSHROOM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                             </select>
                         </div>
                         {/* Status */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Current Status</label>
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium">Current Status</label>
                             <select
                                 {...register('status')}
-                                className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                                className="flex h-8 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:ring-1 focus:ring-primary focus:outline-none"
                             >
                                 {STATUSES.map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
                             </select>
@@ -114,62 +114,62 @@ export default function BatchForm() {
                     </div>
 
                     {/* Dates */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Start Date</label>
-                            <Input type="date" {...register('start_date')} />
-                            {errors.start_date && <p className="text-xs text-red-500">{errors.start_date.message}</p>}
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium">Start Date</label>
+                            <Input type="date" className="h-8 text-xs py-1" {...register('start_date')} />
+                            {errors.start_date && <p className="text-[10px] text-red-500">{errors.start_date.message}</p>}
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Target Harvest</label>
-                            <Input type="date" {...register('target_harvest_date')} />
-                            {errors.target_harvest_date && <p className="text-xs text-red-500">{errors.target_harvest_date.message}</p>}
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium">Target Harvest</label>
+                            <Input type="date" className="h-8 text-xs py-1" {...register('target_harvest_date')} />
+                            {errors.target_harvest_date && <p className="text-[10px] text-red-500">{errors.target_harvest_date.message}</p>}
                         </div>
                     </div>
 
                     {/* Substrate Info */}
-                    <div className="p-3 bg-gray-50 rounded-md space-y-3">
-                        <h4 className="text-xs font-semibold uppercase text-gray-500">Substrate & Spawn</h4>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Substrate Type</label>
+                    <div className="p-2 bg-gray-50 rounded-md space-y-2">
+                        <h4 className="text-[10px] font-semibold uppercase text-gray-500">Substrate & Spawn</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium">Substrate Type</label>
                                 <select
                                     {...register('substrate_type')}
-                                    className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                                    className="flex h-8 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:ring-1 focus:ring-primary focus:outline-none"
                                 >
                                     {SUBSTRATE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                                 </select>
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Qty Used (kg/bags)</label>
-                                <Input type="number" step="0.1" {...register('substrate_qty')} />
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium">Qty (kg)</label>
+                                <Input type="number" step="0.1" className="h-8 text-xs py-1" {...register('substrate_qty')} />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Spawn Used</label>
-                                <Input placeholder="e.g. Wheat Grain" {...register('spawn_type')} />
+                        <div className="grid grid-cols-2 gap-2">
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium">Spawn Used</label>
+                                <Input className="h-8 text-xs py-1" placeholder="e.g. Wheat Grain" {...register('spawn_type')} />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Spawn Qty (kg)</label>
-                                <Input type="number" step="0.1" {...register('spawn_qty')} />
+                            <div className="space-y-1">
+                                <label className="text-xs font-medium">Qty (kg)</label>
+                                <Input type="number" step="0.1" className="h-8 text-xs py-1" {...register('spawn_qty')} />
                             </div>
                         </div>
                     </div>
 
                     {/* Notes */}
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Notes</label>
+                    <div className="space-y-1">
+                        <label className="text-xs font-medium">Notes</label>
                         <textarea
                             {...register('notes')}
-                            className="flex min-h-[60px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-                            placeholder="Additional details..."
+                            className="flex min-h-[40px] w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-xs focus:ring-1 focus:ring-primary focus:outline-none"
+                            placeholder="Details..."
                         />
                     </div>
 
-                    <Button type="submit" className="w-full bg-primary" disabled={isLoading}>
-                        {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Create Batch'}
+                    <Button type="submit" className="w-full h-9 text-xs bg-primary" disabled={isLoading}>
+                        {isLoading ? <Loader2 className="mr-2 h-3 w-3 animate-spin" /> : 'Create Batch'}
                     </Button>
                 </form>
             </CardContent>
