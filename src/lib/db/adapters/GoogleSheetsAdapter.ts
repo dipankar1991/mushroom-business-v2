@@ -1,5 +1,5 @@
 import type { DatabaseAdapter } from '../types';
-import type { Transaction } from '@/lib/constants';
+import type { Transaction, Batch, HarvestLog } from '@/lib/constants';
 
 const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SHEETS_URL;
 
@@ -80,4 +80,15 @@ export class GoogleSheetsAdapter implements DatabaseAdapter {
         console.warn("Delete not implemented for Google Sheets yet.");
         throw new Error("Delete not supported for Google Sheets yet.");
     }
+
+    // --- Batches (Stubs) ---
+    async getBatches(): Promise<Batch[]> { return []; }
+    async addBatch(_batch: Omit<Batch, 'id' | 'created_at'>): Promise<Batch | null> { throw new Error("Not implemented"); }
+    async updateBatch(_id: string, _batch: Partial<Batch>): Promise<Batch | null> { throw new Error("Not implemented"); }
+    async deleteBatch(_id: string): Promise<void> { throw new Error("Not implemented"); }
+
+    // --- Harvest Logs (Stubs) ---
+    async getHarvestLogs(_batchId: string): Promise<HarvestLog[]> { return []; }
+    async addHarvestLog(_log: Omit<HarvestLog, 'id' | 'created_at'>): Promise<HarvestLog | null> { throw new Error("Not implemented"); }
+    async deleteHarvestLog(_id: string): Promise<void> { throw new Error("Not implemented"); }
 }

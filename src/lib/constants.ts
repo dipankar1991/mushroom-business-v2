@@ -11,6 +11,37 @@ export interface Transaction {
     credit: number;
     notes?: string;
     created_at?: string;
+    // V3: Batch Integration
+    batch_id?: string;
+    quantity_kg?: number;
+    unit_price?: number;
+}
+
+export interface Batch {
+    id: string;
+    name: string;
+    status: 'preparation' | 'inoculation' | 'incubation' | 'fruiting' | 'harvesting' | 'completed';
+    type: string;
+    start_date: string;
+    target_harvest_date: string;
+    actual_harvest_date?: string;
+    substrate_type?: string;
+    substrate_qty?: number;
+    spawn_type?: string;
+    spawn_qty?: number;
+    total_cost?: number;
+    notes?: string;
+    created_at?: string;
+}
+
+export interface HarvestLog {
+    id: string;
+    batch_id: string;
+    date: string;
+    weight_kg: number;
+    grade: 'A' | 'B' | 'C' | 'Waste';
+    notes?: string;
+    created_at?: string;
 }
 
 export const TRANSACTION_TYPES: { value: TransactionType; label: string }[] = [
