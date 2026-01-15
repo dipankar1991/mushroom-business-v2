@@ -114,7 +114,7 @@ export default function BatchForm() {
                     </div>
 
                     {/* Dates */}
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2">
                         <div className="space-y-1">
                             <label className="text-xs font-medium">Start Date</label>
                             <Input type="date" className="h-8 text-xs py-1" {...register('start_date')} />
